@@ -1,46 +1,46 @@
-const express = require("express");
-const Cart = require("../models/Cart");
-const Orders = require("../models/Orders");
-const router = express.Router();
-const { body, validationResult } = require("express-validator");
+const express = require('express')
+const Cart = require('../models/Cart')
+const Orders = require('../models/Orders')
+const router = express.Router()
+const { body, validationResult } = require('express-validator')
 
 //Route:1 Add to Cart
-router.post("/Add", [], async (req, res) => {
+router.post('/Add', [], async (req, res) => {
   //return errors if found
-  const errors = validationResult(req);
+  const errors = validationResult(req)
   if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
+    return res.status(400).json({ errors: errors.array() })
   }
-  let catagoryFound = false;
-  let foundIndexCatagory;
-  let itemFound = false;
-  let foundIndexItem;
+  let catagoryFound = false
+  let foundIndexCatagory
+  let itemFound = false
+  let foundIndexItem
   //check if Email exist
-  let cart = await Cart.findOne({ Email: req.body.Email });
+  let cart = await Cart.findOne({ Email: req.body.Email })
   if (!cart) {
     Cart.create({
       Email: req.body.Email,
       CatagoryList: req.body.CatagoryList,
-    });
-    return res.json({ Message: "Item Added" });
+    })
+    return res.json({ Message: 'Item Added' })
   } else {
     for (let i = 0; i < cart.CatagoryList.length; i++) {
       if (
         cart.CatagoryList[i].CatagoryName ==
         req.body.CatagoryList[0].CatagoryName
       ) {
-        catagoryFound = true;
-        foundIndexCatagory = i;
+        catagoryFound = true
+        foundIndexCatagory = i
       }
     }
     if (!catagoryFound) {
-        cart.CatagoryList.push(req.body.CatagoryList[0])
-        cart.save(function (err){
-            if(err) {
-                console.error('ERROR!');
-            }
-        })
-        return res.json({ Message: "Item Added" });
+      cart.CatagoryList.push(req.body.CatagoryList[0])
+      cart.save(function (err) {
+        if (err) {
+          console.error('ERROR!')
+        }
+      })
+      return res.json({ Message: 'Item Added' })
     } else {
       for (
         let i = 0;
@@ -51,154 +51,173 @@ router.post("/Add", [], async (req, res) => {
           cart.CatagoryList[foundIndexCatagory].ItemList[i].Name ==
           req.body.CatagoryList[0].ItemList[0].Name
         ) {
-          itemFound = true;
-          foundIndexItem = i;
+          itemFound = true
+          foundIndexItem = i
         }
       }
       if (!itemFound) {
-        cart.CatagoryList[foundIndexCatagory].ItemList.push(req.body.CatagoryList[0].ItemList[0])
-        cart.save(function (err){
-            if(err) {
-                console.error('ERROR!');
-            }
+        cart.CatagoryList[foundIndexCatagory].ItemList.push(
+          req.body.CatagoryList[0].ItemList[0],
+        )
+        cart.save(function (err) {
+          if (err) {
+            console.error('ERROR!')
+          }
         })
-        return res.json({ Message: "Item Added" });
+        return res.json({ Message: 'Item Added' })
       } else {
-        cart.CatagoryList[foundIndexCatagory].ItemList[foundIndexItem].quantity=parseInt(cart.CatagoryList[foundIndexCatagory].ItemList[foundIndexItem].quantity)+parseInt(req.body.CatagoryList[0].ItemList[0].quantity)
-        cart.save(function (err){
-            if(err) {
-                console.error('ERROR!');
-            }
+        cart.CatagoryList[foundIndexCatagory].ItemList[
+          foundIndexItem
+        ].quantity =
+          parseInt(
+            cart.CatagoryList[foundIndexCatagory].ItemList[foundIndexItem]
+              .quantity,
+          ) + parseInt(req.body.CatagoryList[0].ItemList[0].quantity)
+        cart.save(function (err) {
+          if (err) {
+            console.error('ERROR!')
+          }
         })
-        return res.json({ Message: "Item Added" });
+        return res.json({ Message: 'Item Added' })
       }
     }
   }
-});
-
-
-
+})
 
 //Route:2 Remove from Cart
-router.post("/Remove", [], async (req, res) => {
-    //return errors if found
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+router.post('/Remove', [], async (req, res) => {
+  //return errors if found
+  const errors = validationResult(req)
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() })
+  }
+  let catagoryFound = false
+  let foundIndexCatagory
+  let itemFound = false
+  let foundIndexItem
+  //check if Email exist
+  let cart = await Cart.findOne({ Email: req.body.Email })
+  if (!cart) {
+  } else {
+    for (let i = 0; i < cart.CatagoryList.length; i++) {
+      if (
+        cart.CatagoryList[i].CatagoryName ==
+        req.body.CatagoryList[0].CatagoryName
+      ) {
+        catagoryFound = true
+        foundIndexCatagory = i
+      }
     }
-    let catagoryFound = false;
-    let foundIndexCatagory;
-    let itemFound = false;
-    let foundIndexItem;
-    //check if Email exist
-    let cart = await Cart.findOne({ Email: req.body.Email });
-    if (!cart) {
+    if (!catagoryFound) {
     } else {
-      for (let i = 0; i < cart.CatagoryList.length; i++) {
+      for (
+        let i = 0;
+        i < cart.CatagoryList[foundIndexCatagory].ItemList.length;
+        i++
+      ) {
         if (
-          cart.CatagoryList[i].CatagoryName ==
-          req.body.CatagoryList[0].CatagoryName
+          cart.CatagoryList[foundIndexCatagory].ItemList[i].Name ==
+          req.body.CatagoryList[0].ItemList[0].Name
         ) {
-          catagoryFound = true;
-          foundIndexCatagory = i;
+          itemFound = true
+          foundIndexItem = i
         }
       }
-      if (!catagoryFound) {
+      if (!itemFound) {
       } else {
-        for (
-          let i = 0;
-          i < cart.CatagoryList[foundIndexCatagory].ItemList.length;
-          i++
+        if (
+          parseInt(
+            cart.CatagoryList[foundIndexCatagory].ItemList[foundIndexItem]
+              .quantity,
+          ) -
+            parseInt(req.body.CatagoryList[0].ItemList[0].quantity) >
+          0
         ) {
-          if (
-            cart.CatagoryList[foundIndexCatagory].ItemList[i].Name ==
-            req.body.CatagoryList[0].ItemList[0].Name
-          ) {
-            itemFound = true;
-            foundIndexItem = i;
+          cart.CatagoryList[foundIndexCatagory].ItemList[
+            foundIndexItem
+          ].quantity =
+            parseInt(
+              cart.CatagoryList[foundIndexCatagory].ItemList[foundIndexItem]
+                .quantity,
+            ) - parseInt(req.body.CatagoryList[0].ItemList[0].quantity)
+          cart.save(function (err) {
+            if (err) {
+              console.error('ERROR!')
+            }
+          })
+          return res.json({ Message: 'Item Removed' })
+        } else {
+          if (cart.CatagoryList[foundIndexCatagory].ItemList.length > 1) {
+            console.log(cart.CatagoryList[foundIndexCatagory].ItemList, 'a')
+            cart.CatagoryList[foundIndexCatagory].ItemList.splice(
+              cart.CatagoryList[foundIndexCatagory].ItemList.indexOf(
+                req.body.CatagoryList[0].ItemList[0],
+              ),
+              1,
+            )
+            console.log(cart.CatagoryList[foundIndexCatagory].ItemList, 'b')
+            cart.save(function (err) {
+              if (err) {
+                console.error('ERROR!')
+              }
+            })
+            return res.json({ Message: 'Item Removed' })
+          } else {
+            if (cart.CatagoryList.length > 1) {
+              cart.CatagoryList.splice(
+                cart.CatagoryList.indexOf(req.body.CatagoryList[0]),
+                1,
+              )
+              cart.save(function (err) {
+                if (err) {
+                  console.error('ERROR!')
+                }
+              })
+              return res.json({ Message: 'Item Removed' })
+            } else {
+              await Cart.findByIdAndDelete(cart._id)
+              return res.json({ Message: 'Item Removed' })
+            }
           }
         }
-        if (!itemFound) {
-        } else {
-            if(parseInt(cart.CatagoryList[foundIndexCatagory].ItemList[foundIndexItem].quantity)-parseInt(req.body.CatagoryList[0].ItemList[0].quantity)>0){
-                cart.CatagoryList[foundIndexCatagory].ItemList[foundIndexItem].quantity=parseInt(cart.CatagoryList[foundIndexCatagory].ItemList[foundIndexItem].quantity)-parseInt(req.body.CatagoryList[0].ItemList[0].quantity)
-                cart.save(function (err){
-                    if(err) {
-                        console.error('ERROR!');
-                    }
-                })
-                return res.json({ Message: "Item Removed" });
-            }
-            else{
-                if(cart.CatagoryList[foundIndexCatagory].ItemList.length>1){
-                    console.log(cart.CatagoryList[foundIndexCatagory].ItemList,"a")
-                    cart.CatagoryList[foundIndexCatagory].ItemList.splice(cart.CatagoryList[foundIndexCatagory].ItemList.indexOf(req.body.CatagoryList[0].ItemList[0]),1)
-                    console.log(cart.CatagoryList[foundIndexCatagory].ItemList,"b")
-                    cart.save(function (err){
-                        if(err) {
-                            console.error('ERROR!');
-                        }
-                    })
-                    return res.json({ Message: "Item Removed" });
-                }
-                else{
-                    if(cart.CatagoryList.length>1){
-                        cart.CatagoryList.splice(cart.CatagoryList.indexOf(req.body.CatagoryList[0]),1)
-                        cart.save(function (err){
-                            if(err) {
-                                console.error('ERROR!');
-                            }
-                        })
-                        return res.json({ Message: "Item Removed" });
-                    }
-                    else{
-                        await Cart.findByIdAndDelete(cart._id);
-                        return res.json({ Message: "Item Removed" });
-                    }
-                }
-            }
-        }
       }
     }
-  });
-
-  //Route:3 View Cart
-router.post('/ViewCart',[
-],async (req,res)=>{
-    //return errors if found
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-    //return Catalog
-    let cart = await Cart.findOne({Email: req.body.Email})
-    return res.json(cart);
+  }
 })
 
-  //Route:4 PlaceOrder
-  router.post('/PlaceOrder',[
-],async (req,res)=>{
-    //return errors if found
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-    //Create Order
-    console.log(req.body)
-    await Orders.create({
-        Email: req.body.Email,
-        Billing: {
-            Name:req.body.Billing.Name,
-            Address: req.body.Billing.Address,
-            Zip: req.body.Billing.Zip
-        },
-        ItemList: req.body.ItemList
-      });
-      await Cart.deleteOne({Email: req.body.Email})
-      
-      return res.json({ Message: "Order Placed" });
-
+//Route:3 View Cart
+router.post('/ViewCart', [], async (req, res) => {
+  //return errors if found
+  const errors = validationResult(req)
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() })
+  }
+  //return Catalog
+  let cart = await Cart.findOne({ Email: req.body.Email })
+  return res.json(cart)
 })
 
+//Route:4 PlaceOrder
+router.post('/PlaceOrder', [], async (req, res) => {
+  //return errors if found
+  const errors = validationResult(req)
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() })
+  }
+  //Create Order
+  console.log(req.body)
+  await Orders.create({
+    Email: req.body.Email,
+    Billing: {
+      Name: req.body.Billing.Name,
+      Address: req.body.Billing.Address,
+      Zip: req.body.Billing.Zip,
+    },
+    ItemList: req.body.ItemList,
+  })
+  await Cart.deleteOne({ Email: req.body.Email })
 
-module.exports = router;
+  return res.json({ Message: 'Order Placed' })
+})
+
+module.exports = router

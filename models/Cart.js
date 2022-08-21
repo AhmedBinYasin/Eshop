@@ -1,10 +1,10 @@
-const mongoose = require("mongoose");
-const { Schema } = mongoose;
+const mongoose = require('mongoose')
+const { Schema } = mongoose
 
 const cartSchema = new Schema({
   Email: {
     type: String,
-    default : "Unsigned"
+    default: 'Unsigned',
   },
   CatagoryList: [
     {
@@ -34,7 +34,7 @@ const cartSchema = new Schema({
       ],
     },
   ],
-});
+})
 
-const Cart = mongoose.model("cart", cartSchema);
-module.exports = Cart;
+const Cart = mongoose.model('cart', cartSchema)
+module.exports = Cart
