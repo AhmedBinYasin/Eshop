@@ -80,55 +80,52 @@ router.post(
   },
 )
 
-
 //Route:1 Get AllUsers
 router.post('/ViewUsers', [], async (req, res) => {
-    //return errors if found
-    const errors = validationResult(req)
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() })
+  //return errors if found
+  const errors = validationResult(req)
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() })
+  }
+
+  //return Users
+  let users = await User.find()
+  for (let i = 0; i < users.length; i++) {
+    users[i] = {
+      Name: users[i].Name,
+      Email: users[i].Email,
+      Role: users[i].Role,
     }
+  }
+  return res.json(users)
+})
 
-    //return Users
-    let users = await User.find()
-    for (let i = 0; i < users.length; i++) {
-        users[i]={
-            Name:users[i].Name,
-            Email:users[i].Email,
-            Role:users[i].Role,
-        }
-        
-    }
-    return res.json(users)
-  })
-
-
-  //Route:1 Change Users Role
+//Route:1 Change Users Role
 router.post('/UpdateUsersRole', [], async (req, res) => {
-    //return errors if found
-    const errors = validationResult(req)
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() })
+  //return errors if found
+  const errors = validationResult(req)
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() })
+  }
+  let users = await User.findOne({ Email: req.body.Email })
+  users.Role = req.body.Role
+  users.save(function (err) {
+    if (err) {
+      console.error('ERROR!')
     }
-let users = await User.findOne({ Email: req.body.Email})
-    users.Role=req.body.Role
-    users.save(function (err) {
-        if (err) {
-          console.error('ERROR!')
-        }
-      })
-    return res.json("Sucessfull")
   })
+  return res.json('Sucessfull')
+})
 
-  //Route:1 Delete Users
+//Route:1 Delete Users
 router.post('/DeleteUsers', [], async (req, res) => {
-    //return errors if found
-    const errors = validationResult(req)
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() })
-    }
-let users = await User.deleteOne({ Email: req.body.Email})
-    return res.json("Sucessfull")
-  })
+  //return errors if found
+  const errors = validationResult(req)
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() })
+  }
+  let users = await User.deleteOne({ Email: req.body.Email })
+  return res.json('Sucessfull')
+})
 
 module.exports = router

@@ -148,14 +148,13 @@ router.post('/Remove', [], async (req, res) => {
           return res.json({ Message: 'Item Removed' })
         } else {
           if (cart.CatagoryList[foundIndexCatagory].ItemList.length > 1) {
-            console.log(cart.CatagoryList[foundIndexCatagory].ItemList, 'a')
             cart.CatagoryList[foundIndexCatagory].ItemList.splice(
               cart.CatagoryList[foundIndexCatagory].ItemList.indexOf(
                 req.body.CatagoryList[0].ItemList[0],
               ),
               1,
             )
-            console.log(cart.CatagoryList[foundIndexCatagory].ItemList, 'b')
+
             cart.save(function (err) {
               if (err) {
                 console.error('ERROR!')
