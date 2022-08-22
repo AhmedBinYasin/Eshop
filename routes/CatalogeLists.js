@@ -16,4 +16,21 @@ router.post('/ViewCatalog', [], async (req, res) => {
   return res.json(catalog)
 })
 
+//Route:1 Delete Catalogue Item
+router.post('/DeleteItem', [], async (req, res) => {
+  //return errors if found
+  const errors = validationResult(req)
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() })
+  }
+  let catalog = await Catalogue.findOne({ CatagoryName: req.body.CatagoryName })
+  catalog.ItemList.splice(catalog.ItemList.indexOf(req.body.Id),1)
+  catalog.save(function (err) {
+    if (err) {
+      console.error('ERROR!')
+    }
+  })
+  return res.json('Sucessfull')
+})
+
 module.exports = router
