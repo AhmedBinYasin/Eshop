@@ -19,6 +19,10 @@ const orderSchema = new Schema({
       type: String,
       required: true,
     },
+    OrderPrice: {
+      type: String,
+      required: true,
+    },
   },
   ItemList: [
     {
@@ -27,6 +31,14 @@ const orderSchema = new Schema({
         required: true,
       },
       Name: {
+        type: String,
+        required: true,
+      },
+      Price: {
+        type: String,
+        required: true,
+      },
+      TotalPrice: {
         type: String,
         required: true,
       },

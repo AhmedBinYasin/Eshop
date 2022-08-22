@@ -205,13 +205,13 @@ router.post('/PlaceOrder', [], async (req, res) => {
     return res.status(400).json({ errors: errors.array() })
   }
   //Create Order
-  console.log(req.body)
   await Orders.create({
     Email: req.body.Email,
     Billing: {
       Name: req.body.Billing.Name,
       Address: req.body.Billing.Address,
       Zip: req.body.Billing.Zip,
+      OrderPrice: req.body.Billing.OrderPrice,
     },
     ItemList: req.body.ItemList,
   })
@@ -220,5 +220,16 @@ router.post('/PlaceOrder', [], async (req, res) => {
   return res.json({ Message: 'Order Placed' })
 })
 
+//Route:3 View Orders
+router.post('/ViewOrders', [], async (req, res) => {
+  //return errors if found
+  const errors = validationResult(req)
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() })
+  }
+  //return Catalog
+  let orders = await Orders.find()
+  return res.json(orders)
+})
 
 module.exports = router
